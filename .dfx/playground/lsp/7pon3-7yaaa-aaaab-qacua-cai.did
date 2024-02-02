@@ -1,0 +1,53 @@
+type Account = record { owner : principal; subaccount : opt Subaccount };
+type CreateProposalErr = variant { NotDAOMember; NotEnoughTokens };
+type CreateProposalOk = nat;
+type CreateProposalResult = variant {
+  ok : CreateProposalOk;
+  err : CreateProposalErr;
+};
+type DAO = service {
+  addGoal : (text) -> ();
+  addMember : (Member) -> (Result);
+  balanceOf : (Account) -> (nat) query;
+  createProposal : (text) -> (CreateProposalResult);
+  getAllMembers : () -> (vec Member) query;
+  getAllProposals : () -> (vec Proposal) query;
+  getGoals : () -> (vec text) query;
+  getManifesto : () -> (text) query;
+  getMember : (principal) -> (Result_1) query;
+  getName : () -> (text) query;
+  getProposal : (nat) -> (opt Proposal) query;
+  mint : (principal, nat) -> ();
+  numberOfMembers : () -> (nat) query;
+  removeMember : () -> (Result);
+  setManifesto : (text) -> ();
+  tokenName : () -> (text) query;
+  tokenSymbol : () -> (text) query;
+  totalSupply : () -> (nat) query;
+  transfer : (Account, Account, nat) -> (Result);
+  updateMember : (Member) -> (Result);
+  voteProposal : (nat, bool) -> (VoteResult);
+  whoami : () -> (principal) query;
+};
+type Member = record { age : nat; name : text };
+type Proposal = record {
+  id : nat;
+  status : Status;
+  votes : int;
+  voters : vec principal;
+  manifest : text;
+};
+type Result = variant { ok; err : text };
+type Result_1 = variant { ok : Member; err : text };
+type Status = variant { Open; Rejected; Accepted };
+type Subaccount = vec nat8;
+type VoteErr = variant {
+  AlreadyVoted;
+  ProposalEnded;
+  ProposalNotFound;
+  NotDAOMember;
+  NotEnoughTokens;
+};
+type VoteOk = variant { ProposalOpen; ProposalRefused; ProposalAccepted };
+type VoteResult = variant { ok : VoteOk; err : VoteErr };
+service : DAO

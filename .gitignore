@@ -1,2 +1,37 @@
 .mops
 **/.DS_Store
+
+# General
+.DS_Store
+Thumbs.db
+
+# Node modules
+node_modules/
+
+# DFX build artifacts
+.dfx/
+dfx-generated/
+
+# Canister ids - consider if you want to ignore or keep them
+# Depending on your deployment strategy, you might want to keep
+# canister_ids.json in source control
+# canister_ids.json
+
+# Motoko .mo source files might generate .did.js and .did.d.ts files
+*.did.js
+*.did.d.ts
+
+# Environment files
+.env
+.env.local
+
+# IDE-specific files
+.idea/
+.vscode/
+*.swp
+*~
+
+# Build output
+dist/
+build/
+wasm/

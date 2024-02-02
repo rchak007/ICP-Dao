@@ -1,0 +1,88 @@
+type Vote = 
+ record {
+   member: principal;
+   votingPower: nat;
+   yesOrNo: bool;
+ };
+type Time = int;
+type Subaccount = blob;
+type Result_2 = 
+ variant {
+   err: text;
+   ok: ProposalId__1;
+ };
+type Result_1 = 
+ variant {
+   err: text;
+   ok: Member;
+ };
+type Result = 
+ variant {
+   err: text;
+   ok;
+ };
+type ProposalStatus = 
+ variant {
+   Accepted;
+   Open;
+   Rejected;
+ };
+type ProposalId__1 = nat64;
+type ProposalId = nat64;
+type ProposalContent__1 = 
+ variant {
+   AddGoal: text;
+   ChangeManifesto: text;
+ };
+type ProposalContent = 
+ variant {
+   AddGoal: text;
+   ChangeManifesto: text;
+ };
+type Proposal = 
+ record {
+   content: ProposalContent;
+   created: Time;
+   creator: principal;
+   executed: opt Time;
+   id: nat64;
+   status: ProposalStatus;
+   voteScore: int;
+   votes: vec Vote;
+ };
+type Member = 
+ record {
+   age: nat;
+   name: text;
+ };
+type Account = 
+ record {
+   owner: principal;
+   subaccount: opt Subaccount;
+ };
+service : {
+  _burn: (principal, nat) -> () oneway;
+  addGoal: (text) -> ();
+  addMember: (Member) -> (Result);
+  balanceOf: (principal) -> (nat) query;
+  burn: (principal, nat) -> (Result);
+  createProposal: (ProposalContent__1) -> (Result_2);
+  getAllMembers: () -> (vec Member) query;
+  getAllProposals: () -> (vec Proposal) query;
+  getGoals: () -> (vec text) query;
+  getManifesto: () -> (text) query;
+  getMember: (principal) -> (Result_1) query;
+  getName: () -> (text) query;
+  getProposal: (nat64) -> (opt Proposal) query;
+  mint: (principal, nat) -> (Result);
+  numberOfMembers: () -> (nat) query;
+  removeMember: () -> (Result);
+  setManifesto: (text) -> ();
+  tokenName: () -> (text) query;
+  tokenSymbol: () -> (text) query;
+  totalSupply: () -> (nat) query;
+  transfer: (Account, Account, nat) -> (Result);
+  updateMember: (Member) -> (Result);
+  voteProposal: (ProposalId, bool) -> (Result);
+  whoami: () -> (principal) query;
+}
