@@ -26,6 +26,10 @@ actor class DAO()  {
         return name;
     };
 
+    func _getName() : Text {
+        return name;
+    };
+
     public shared query func getManifesto() : async Text {
         return manifesto;
     };
@@ -239,31 +243,37 @@ actor class DAO()  {
     // LEVEL #5 //
     /////////////
 
-    // func _getWebpage() : Text {
-    //     var webpage = "<style>" #
-    //     "body { text-align: center; font-family: Arial, sans-serif; background-color: #f0f8ff; color: #333; }" #
-    //     "h1 { font-size: 3em; margin-bottom: 10px; }" #
-    //     "hr { margin-top: 20px; margin-bottom: 20px; }" #
-    //     "em { font-style: italic; display: block; margin-bottom: 20px; }" #
-    //     "ul { list-style-type: none; padding: 0; }" #
-    //     "li { margin: 10px 0; }" #
-    //     "li:before { content: '👉 '; }" #
-    //     "svg { max-width: 150px; height: auto; display: block; margin: 20px auto; }" #
-    //     "h2 { text-decoration: underline; }" #
-    //     "</style>";
+    let logo : Text = "<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns='http://www.w3.org/2000/svg' id='Layer_1' data-name='Layer 1' viewBox='0 0 24 24'>
+  <path d='m3.5,20c1.103,0,2-.897,2-2s-.897-2-2-2-2,.897-2,2,.897,2,2,2Zm0-3c.551,0,1,.448,1,1s-.449,1-1,1-1-.448-1-1,.449-1,1-1Zm6.5,1c0,1.103.897,2,2,2s2-.897,2-2-.897-2-2-2-2,.897-2,2Zm3,0c0,.552-.449,1-1,1s-1-.448-1-1,.449-1,1-1,1,.448,1,1Zm-1-14c1.103,0,2-.897,2-2s-.897-2-2-2-2,.897-2,2,.897,2,2,2Zm0-3c.551,0,1,.448,1,1s-.449,1-1,1-1-.448-1-1,.449-1,1-1Zm6.5,17c0,1.103.897,2,2,2s2-.897,2-2-.897-2-2-2-2,.897-2,2Zm3,0c0,.552-.449,1-1,1s-1-.448-1-1,.449-1,1-1,1,.448,1,1ZM4,14h-1v-2c0-1.103.897-2,2-2h14c1.103,0,2,.897,2,2v2h-1v-2c0-.552-.449-1-1-1h-6.5v3h-1v-3h-6.5c-.551,0-1,.448-1,1v2Zm3,9v1h-1v-1c0-.552-.449-1-1-1h-3c-.551,0-1,.448-1,1v1H0v-1c0-1.103.897-2,2-2h3c1.103,0,2,.897,2,2Zm17,0v1h-1v-1c0-.552-.449-1-1-1h-3c-.551,0-1,.448-1,1v1h-1v-1c0-1.103.897-2,2-2h3c1.103,0,2,.897,2,2Zm-8.5,0v1h-1v-1c0-.552-.449-1-1-1h-3c-.551,0-1,.448-1,1v1h-1v-1c0-1.103.897-2,2-2h3c1.103,0,2,.897,2,2Zm-6-15h-1v-1c0-1.103.897-2,2-2h3c1.103,0,2,.897,2,2v1h-1v-1c0-.552-.449-1-1-1h-3c-.551,0-1,.448-1,1v1Z'/>
+</svg>";
 
-    //     webpage := webpage # "<div><h1>" # name # "</h1></div>";
-    //     webpage := webpage # "<em>" # manifesto # "</em>";
-    //     webpage := webpage # "<div>" # logo # "</div>";
-    //     webpage := webpage # "<hr>";
-    //     webpage := webpage # "<h2>Our goals:</h2>";
-    //     webpage := webpage # "<ul>";
-    //     for (goal in goals.vals()) {
-    //         webpage := webpage # "<li>" # goal # "</li>";
-    //     };
-    //     webpage := webpage # "</ul>";
-    //     return webpage;
-    // };
+
+    func _getWebpage() : Text {
+        var webpage = "<style>" #
+        "body { text-align: center; font-family: Arial, sans-serif; background-color: #f0f8ff; color: #333; }" #
+        "h1 { font-size: 3em; margin-bottom: 10px; }" #
+        "hr { margin-top: 20px; margin-bottom: 20px; }" #
+        "em { font-style: italic; display: block; margin-bottom: 20px; }" #
+        "ul { list-style-type: none; padding: 0; }" #
+        "li { margin: 10px 0; }" #
+        "li:before { content: '👉 '; }" #
+        "svg { max-width: 150px; height: auto; display: block; margin: 20px auto; }" #
+        "h2 { text-decoration: underline; }" #
+        "</style>";
+
+        webpage := webpage # "<div><h1>" # name # "</h1></div>";
+        webpage := webpage # "<em>" # manifesto # "</em>";
+        webpage := webpage # "<div>" # logo # "</div>";
+        webpage := webpage # "<hr>";
+        webpage := webpage # "<h2>Our goals:</h2>";
+        webpage := webpage # "<ul>";
+        for (goal in goals.vals()) {
+            webpage := webpage # "<li>" # goal # "</li>";
+        };
+        webpage := webpage # "</ul>";
+        return webpage;
+    };
 
     public type DAOStats = {
         name : Text;
@@ -276,23 +286,38 @@ actor class DAO()  {
     public type HttpRequest = Http.Request;
     public type HttpResponse = Http.Response;
 
-    public func http_request(request : HttpRequest) : async HttpResponse {
+    public query func http_request(request : HttpRequest) : async HttpResponse {
         return ({
-            status_code = 404;
-            headers = [];
-            body = Blob.fromArray([]);
+            // status_code = 404;
+            status_code = 200 : Nat16;  // 200 means everything is correct.
+            // headers = [];
+            headers = [("Content-Type", "text/html; charset=UTF-8")];  // return HTML page
+            // body = Blob.fromArray([]);
+            body = Text.encodeUtf8(_getWebpage());
             streaming_strategy = null;
         });
     };
 
+    func _getMembers() : [Text] {
+        let buffer = Buffer.Buffer<Text>(0);
+        for (member in dao.vals()){
+            buffer.add(member.name);
+        };
+        return Buffer.toArray(buffer);
+    };
+
+
+
     public query func getStats() : async DAOStats {
         return ({
-            name = "";
-            manifesto = "";
-            goals = [];
-            member = [];
-            logo = "";
-            numberOfMembers = 0;
+            name = name;
+            manifesto = manifesto;
+            goals = Buffer.toArray(goals);
+            member = _getMembers();
+            // logo = "";
+            logo = logo;
+            numberOfMembers = dao.size();
+            // numberOfMembers = _getMembers().size(); will also work
         });
     };
 
